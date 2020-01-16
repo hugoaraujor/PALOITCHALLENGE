@@ -1,0 +1,114 @@
+﻿@using PALOITChallenge
+@{
+    ViewData["Title"] = "Home Page";
+
+}
+<script>
+    var coords = [];
+</script>
+
+<div class="formcontainer">
+    <br />
+    <form>
+
+        <div class="row form-row  form-group  col-auto">
+            <div class="form-group col-md-5">
+                @Html.Label("Level of Pain:")
+                @Html.DropDownList("Level", Html.GetEnumSelectList<PainLevels>(), "Select Pain Level", new { @class = "form-control" })
+            </div>
+            <div class="form-group col-md-5">
+                @Html.Label("Illness:")
+                @Html.DropDownList("Illnesspain", @ViewBag.illness as SelectList, "Select Illness Pain Level", new { @class = "form-control" })
+            </div>
+            <div class="form-group col-md-2">
+                @Html.Label("Search")
+                <p>
+                    <button type="submit" name="send" id="send" class="btn btn-primary">Send</button>
+                </p>
+                
+            </div>
+                
+            </div>
+</form>
+</div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th class="col-md-2">
+                        <b>Level of Pain</b>
+                    </th>
+                    <th class="col-md-4">
+                        <b>
+                            HOSPITAL
+                        </b>
+                    </th>
+
+                    <th class="col-md-1"><b>Patients</b></th>
+                    <th class="col-md-2">
+                        <b>Average Process Time</b>
+
+                    </th>
+                    <th class="col-md-2">
+                        <b>Waiting Time</b>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (Hospital m in Model.hospitals)
+                {
+                    <tr>
+                        <td class="col-md-2">
+                            @m.waitingList.ToList().FirstOrDefault().levelOfPain
+                        </td>
+                        <td class="col-md-4 ">
+                            @m.name
+                        </td>
+                        <td class="col-md-1">@m.waitingList.FirstOrDefault().patientCount</td>
+                        <td class="col-md-2">
+                            @m.waitingList.First().averageProcessTime min.
+                        </td>
+                        <td class="col-md-2">
+                            @(m.waitingTime)
+
+                        </td>
+
+                    </tr>
+                    <script>coords.push({lat:@(m.location.lat),lng:@(m.location.lng),title:'@m.name'});</script>
+                }
+            </tbody>
+
+        </table>
+
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCc4MdB_ZPFe7caisyrs6uhDLKDUqsv7Tg&callback=initMap" async defer></script>
+
+        <script>
+            var map;
+
+            function initMap() {
+
+                map = new google.maps.Map(document.getElementById('map'), {
+                    center: { lat: -33.500, lng: 151.000 },
+                    zoom: 8.5
+                });
+                coords.forEach(element => addMarker(element.lat, element.lng, element.title));
+            }
+            function addMarker(ilat, ilng, ititle) {
+                var myLatLng = { lat: ilat, lng: ilng };
+                var marker = new google.maps.Marker({
+                    position: myLatLng,
+                    map: map,
+                    title: ititle
+                });
+            }
+        </script>
+        <div id="map"></div>
+
+
+
+
+
+
+
+
+
+
